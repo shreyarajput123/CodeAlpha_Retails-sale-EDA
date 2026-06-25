@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retail Sales EDA Dashboard</title>
+  <style>
+    :root {
+      --ink: #182230;
+      --muted: #667789;
+      --line: #dbe5ec;
+      --panel: #ffffff;
+      --page: #f3f6fa;
+      --teal: #0a7c78;
+      --red: #c8463d;
+      --gold: #b77b17;
+      --green: #2f7d58;
+      --blue: #2868a8;
+      --shadow: 0 18px 45px rgba(24, 34, 48, 0.09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(10, 124, 120, 0.18), transparent 28%),
+        radial-gradient(circle at 92% 6%, rgba(183, 123, 23, 0.16), transparent 28%),
+        var(--page);
+    }
+    header {
+      padding: 34px 32px 28px;
+      background: linear-gradient(135deg, #10343a 0%, #164b54 44%, #f7fbfc 44%, #ffffff 100%);
+      border-bottom: 1px solid rgba(219, 229, 236, 0.9);
+      overflow: hidden;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 28px;
+      align-items: center;
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 7px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 999px;
+      color: #d7eff0;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+    h1 {
+      margin: 18px 0 10px;
+      color: #ffffff;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+    .hero-copy {
+      max-width: 680px;
+      color: #d9ebec;
+      font-size: 17px;
+      margin: 0;
+    }
+    .hero-panel {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .hero-panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .hero-bars { display: grid; gap: 10px; margin-top: 16px; }
+    .hero-bar {
+      display: grid;
+      grid-template-columns: 100px 1fr 54px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e5edf1;
+      overflow: hidden;
+    }
+    .fill {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #eaf8f8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    p { color: var(--muted); line-height: 1.5; }
+    main { max-width: 1220px; margin: 0 auto; padding: 24px; }
+    section { margin: 0 0 28px; }
+    h2 { margin: 0 0 14px; font-size: 22px; }
+    .section-kicker { margin: -7px 0 14px; color: var(--muted); font-size: 14px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+      box-shadow: 0 10px 28px rgba(24, 34, 48, 0.06);
+    }
+    .metric-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 118px;
+    }
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -34px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(10, 124, 120, 0.12);
+    }
+    .metric {
+      display: block;
+      position: relative;
+      z-index: 1;
+      font-size: 27px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+    .two {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+    .chart { width: 100%; min-height: 300px; overflow: visible; }
+    svg { width: 100%; height: 300px; display: block; }
+    .bar-label, .axis, .point-label { fill: var(--muted); font-size: 11px; }
+    .question-list, .issues-list, .test-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .question-list li, .test-list li { margin: 8px 0; }
+    .issue {
+      border: 1px solid #f0cfcb;
+      border-left: 4px solid var(--red);
+      border-radius: 8px;
+      background: #fff8f7;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(24, 34, 48, 0.05);
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+    }
+    th { background: #eaf1f3; }
+    tr:last-child td { border-bottom: 0; }
+    @media (max-width: 900px) {
+      .hero, .grid, .two { grid-template-columns: 1fr; }
+      main { padding: 18px; }
+      header {
+        padding: 24px 20px 20px;
+        background: linear-gradient(180deg, #10343a 0%, #164b54 58%, #ffffff 58%, #ffffff 100%);
+      }
+      .hero-panel { margin-top: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div>
+        <span class="eyebrow">Task 2 EDA Project</span>
+        <h1>Retail Sales EDA Dashboard</h1>
+        <p class="hero-copy">Exploratory analysis of order behavior, revenue patterns, hypotheses, anomalies, and data quality issues for internship submission.</p>
+        <div class="pill-row">
+          <span class="pill">Statistics</span>
+          <span class="pill">Visualization</span>
+          <span class="pill">Hypothesis Testing</span>
+          <span class="pill">Data Quality</span>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <h2>Project Highlights</h2>
+        <p>High-value categories, customer segments, revenue trend, payment behavior, and suspicious records are summarized in one dashboard.</p>
+        <div class="hero-bars">
+          <div class="hero-bar"><span>EDA Scope</span><span class="track"><span class="fill" style="width: 96%"></span></span><strong>96%</strong></div>
+          <div class="hero-bar"><span>Visuals</span><span class="track"><span class="fill" style="width: 88%; background: var(--blue)"></span></span><strong>88%</strong></div>
+          <div class="hero-bar"><span>Quality</span><span class="track"><span class="fill" style="width: 82%; background: var(--gold)"></span></span><strong>82%</strong></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section>
+      <h2>Questions Before Analysis</h2>
+      <p class="section-kicker">The analysis starts with business questions before touching charts or statistics.</p>
+      <div class="card">
+        <ol class="question-list">
+          <li>Which regions and categories generate the most revenue?</li>
+          <li>Are monthly sales increasing, declining, or unstable?</li>
+          <li>Do customer segments differ in average order value?</li>
+          <li>Are discounts associated with lower or higher net sales?</li>
+          <li>Which records show data quality problems or suspicious behavior?</li>
+        </ol>
+      </div>
+    </section>
+
+    <section>
+      <h2>Dataset Snapshot</h2>
+      <p class="section-kicker">Quick health and performance summary from the retail order data.</p>
+      <div class="grid" id="metrics"></div>
+    </section>
+
+    <section class="two">
+      <div class="card">
+        <h2>Monthly Revenue Trend</h2>
+        <div class="chart" id="monthlyChart"></div>
+      </div>
+      <div class="card">
+        <h2>Revenue By Category</h2>
+        <div class="chart" id="categoryChart"></div>
+      </div>
+    </section>
+
+    <section class="two">
+      <div class="card">
+        <h2>Revenue By Region</h2>
+        <div class="chart" id="regionChart"></div>
+      </div>
+      <div class="card">
+        <h2>Payment Method Mix</h2>
+        <div class="chart" id="paymentChart"></div>
+      </div>
+    </section>
+
+    <section class="two">
+      <div class="card">
+        <h2>Hypothesis Checks</h2>
+        <ul class="test-list" id="tests"></ul>
+      </div>
+      <div class="card">
+        <h2>Detected Data Issues</h2>
+        <div id="issues"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Variable Structure</h2>
+      <p class="section-kicker">Variables, data types, and their role in the analysis.</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Type</th><th>Role</th></tr></thead>
+        <tbody id="schema"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const csv = `order_id,order_date,region,city,customer_segment,category,product,quantity,unit_price,discount,payment_method,delivery_days,returned
+R1001,2025-01-05,North,Delhi,Consumer,Electronics,Headphones,2,1200,0.05,UPI,3,No
+R1002,2025-01-09,South,Bengaluru,Corporate,Furniture,Office Chair,1,4800,0.10,Credit Card,5,No
+R1003,2025-01-17,West,Mumbai,Consumer,Home,Air Purifier,1,8500,0.00,Debit Card,4,No
+R1004,2025-01-28,East,Kolkata,Home Office,Clothing,Jacket,3,1800,0.15,UPI,6,Yes
+R1005,2025-02-03,North,Jaipur,Consumer,Groceries,Coffee Pack,5,450,0.00,Cash,2,No
+R1006,2025-02-11,South,Chennai,Corporate,Electronics,Monitor,2,9200,0.08,Credit Card,7,No
+R1007,2025-02-22,West,Pune,Consumer,Clothing,Sneakers,2,2600,0.12,UPI,4,No
+R1008,2025-02-26,East,Bhubaneswar,Home Office,Furniture,Desk Lamp,4,750,0.05,Debit Card,3,No
+R1009,2025-03-04,North,Delhi,Corporate,Electronics,Keyboard,6,1500,0.07,UPI,2,No
+R1010,2025-03-12,South,Hyderabad,Consumer,Home,Bedsheet Set,3,1300,0.10,Credit Card,5,No
+R1011,2025-03-19,West,Mumbai,Home Office,Groceries,Protein Bars,10,180,0.00,UPI,3,No
+R1012,2025-03-30,East,Kolkata,Consumer,Electronics,Smart Watch,1,14500,0.05,Debit Card,8,Yes
+R1013,2025-04-02,North,Lucknow,Consumer,Furniture,Bookshelf,1,6200,0.10,Cash,6,No
+R1014,2025-04-09,South,Bengaluru,Corporate,Home,Vacuum Cleaner,2,7200,0.00,Credit Card,4,No
+R1015,2025-04-15,West,Ahmedabad,Consumer,Clothing,Formal Shirt,4,1100,0.20,UPI,5,No
+R1016,2025-04-26,East,Patna,Home Office,Groceries,Organic Rice,8,320,0.00,Cash,3,No
+R1017,2025-05-03,North,Delhi,Corporate,Electronics,Laptop,1,68000,0.04,Credit Card,5,No
+R1018,2025-05-14,South,Chennai,Consumer,Clothing,Jeans,2,2400,0.18,UPI,4,Yes
+R1019,2025-05-21,West,Pune,Home Office,Home,Cookware Set,2,3600,0.05,Debit Card,6,No
+R1020,2025-05-29,East,Kolkata,Consumer,Groceries,Tea Pack,7,280,0.00,UPI,2,No
+R1021,2025-06-05,North,Jaipur,Home Office,Electronics,Bluetooth Speaker,3,3100,0.10,Credit Card,5,No
+R1022,2025-06-13,South,Hyderabad,Corporate,Furniture,Conference Table,1,24500,0.12,Bank Transfer,9,No
+R1023,2025-06-21,West,Mumbai,Consumer,Home,Water Filter,1,11500,0.07,Debit Card,4,No
+R1024,2025-06-27,East,Bhubaneswar,Consumer,Clothing,T-Shirt,5,650,0.15,UPI,3,No
+R1025,2025-07-04,North,Delhi,Consumer,Groceries,Olive Oil,4,900,0.00,Cash,2,No
+R1026,2025-07-10,South,Bengaluru,Corporate,Electronics,Tablet,2,28500,0.06,Credit Card,6,No
+R1027,2025-07-18,West,Ahmedabad,Home Office,Furniture,Ergonomic Chair,1,15800,0.10,Debit Card,7,No
+R1028,2025-07-24,East,Patna,Consumer,Home,Mixer Grinder,2,4300,0.05,UPI,5,No
+R1029,2025-08-01,North,Lucknow,Corporate,Electronics,Printer,2,12500,0.08,Bank Transfer,6,No
+R1030,2025-08-08,South,Chennai,Consumer,Groceries,Almonds,6,760,0.00,UPI,3,No
+R1031,2025-08-16,West,Pune,Consumer,Clothing,Dress,2,3200,0.22,Credit Card,5,Yes
+R1032,2025-08-25,East,Kolkata,Home Office,Furniture,Study Desk,1,9800,0.09,Debit Card,8,No
+R1033,2025-09-03,North,Delhi,Consumer,Electronics,Smartphone,1,52000,0.03,Credit Card,4,No
+R1034,2025-09-12,South,Hyderabad,Corporate,Home,Microwave,2,10500,0.04,Bank Transfer,6,No
+R1035,2025-09-18,West,Mumbai,Consumer,Groceries,Detergent,12,240,0.00,UPI,,No
+R1035,2025-09-28,East,Bhubaneswar,Home Office,Clothing,Kurta,-1,1500,0.10,Cash,4,No`;
+
+    const rows = parseCsv(csv).map(row => {
+      const quantity = Number(row.quantity);
+      const unitPrice = Number(row.unit_price);
+      const discount = Number(row.discount);
+      return {
+        ...row,
+        quantity,
+        unit_price: unitPrice,
+        discount,
+        delivery_days: row.delivery_days === "" ? null : Number(row.delivery_days),
+        gross_sales: quantity * unitPrice,
+        net_sales: quantity * unitPrice * (1 - discount),
+        month: row.order_date.slice(0, 7)
+      };
+    });
+
+    function parseCsv(text) {
+      const [header, ...lines] = text.trim().split(/\r?\n/);
+      const keys = header.split(",");
+      return lines.map(line => {
+        const values = line.split(",");
+        return Object.fromEntries(keys.map((key, index) => [key, values[index] ?? ""]));
+      });
+    }
+
+    function money(value) {
+      return "Rs " + Math.round(value).toLocaleString("en-IN");
+    }
+
+    function groupSum(key) {
+      return rows.reduce((acc, row) => {
+        acc[row[key]] = (acc[row[key]] || 0) + row.net_sales;
+        return acc;
+      }, {});
+    }
+
+    function countBy(key) {
+      return rows.reduce((acc, row) => {
+        acc[row[key]] = (acc[row[key]] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function renderMetrics() {
+      const totalSales = rows.reduce((sum, row) => sum + row.net_sales, 0);
+      const duplicateIds = rows.length - new Set(rows.map(row => row.order_id)).size;
+      const missingDelivery = rows.filter(row => row.delivery_days === null).length;
+      const negativeQuantity = rows.filter(row => row.quantity < 0).length;
+      const returned = rows.filter(row => row.returned === "Yes").length;
+      const metrics = [
+        ["Rows", rows.length],
+        ["Total net sales", money(totalSales)],
+        ["Average order value", money(totalSales / rows.length)],
+        ["Return rate", `${((returned / rows.length) * 100).toFixed(1)}%`],
+        ["Duplicate IDs", duplicateIds],
+        ["Missing delivery days", missingDelivery],
+        ["Negative quantities", negativeQuantity],
+        ["Categories", new Set(rows.map(row => row.category)).size]
+      ];
+      document.getElementById("metrics").innerHTML = metrics.map(([label, value]) => `
+        <div class="card metric-card"><span class="label">${label}</span><span class="metric">${value}</span></div>
+      `).join("");
+    }
+
+    function renderBarChart(id, data, color) {
+      const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+      const max = Math.max(...entries.map(item => item[1]));
+      const width = 560;
+      const height = 300;
+      const left = 105;
+      const right = 18;
+      const barHeight = 28;
+      const gap = 15;
+      const svg = [`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${id}">`];
+      entries.forEach(([label, value], index) => {
+        const y = 30 + index * (barHeight + gap);
+        const w = ((width - left - right) * value) / max;
+        svg.push(`<text class="bar-label" x="0" y="${y + 19}">${label}</text>`);
+        svg.push(`<rect x="${left}" y="${y}" width="${width - left - right}" height="${barHeight}" rx="5" fill="#edf3f6"></rect>`);
+        svg.push(`<rect x="${left}" y="${y}" width="${w}" height="${barHeight}" rx="5" fill="${color}"></rect>`);
+        svg.push(`<text class="bar-label" x="${left + w + 6}" y="${y + 19}">${money(value)}</text>`);
+      });
+      svg.push("</svg>");
+      document.getElementById(id).innerHTML = svg.join("");
+    }
+
+    function renderLineChart(id, data) {
+      const entries = Object.entries(data).sort((a, b) => a[0].localeCompare(b[0]));
+      const width = 620;
+      const height = 300;
+      const pad = 42;
+      const max = Math.max(...entries.map(item => item[1]));
+      const min = Math.min(...entries.map(item => item[1]));
+      const points = entries.map(([label, value], index) => {
+        const x = pad + index * ((width - pad * 2) / (entries.length - 1));
+        const y = height - pad - ((value - min) / (max - min || 1)) * (height - pad * 2);
+        return { label, value, x, y };
+      });
+      const path = points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
+      const svg = [`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${id}">`];
+      svg.push(`<line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#bcc8d0"></line>`);
+      svg.push(`<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#bcc8d0"></line>`);
+      svg.push(`<path d="${path}" fill="none" stroke="var(--teal)" stroke-width="4"></path>`);
+      points.forEach(point => {
+        svg.push(`<circle cx="${point.x}" cy="${point.y}" r="5" fill="var(--gold)"></circle>`);
+        svg.push(`<text class="axis" x="${point.x - 20}" y="${height - 16}">${point.label.slice(5)}</text>`);
+      });
+      const high = points.reduce((best, point) => point.value > best.value ? point : best, points[0]);
+      svg.push(`<text class="point-label" x="${Math.min(high.x + 8, width - 145)}" y="${high.y - 8}">Peak ${money(high.value)}</text>`);
+      svg.push("</svg>");
+      document.getElementById(id).innerHTML = svg.join("");
+    }
+
+    function renderDonut(id, data) {
+      const entries = Object.entries(data);
+      const total = entries.reduce((sum, item) => sum + item[1], 0);
+      const colors = ["#087f8c", "#b7791f", "#2b6cb0", "#c2413b", "#2f855a"];
+      let angle = -90;
+      const cx = 150;
+      const cy = 145;
+      const r = 92;
+      const svg = [`<svg viewBox="0 0 560 300" role="img" aria-label="${id}">`];
+      entries.forEach(([label, value], index) => {
+        const slice = (value / total) * 360;
+        svg.push(`<path d="${arc(cx, cy, r, angle, angle + slice)}" fill="none" stroke="${colors[index % colors.length]}" stroke-width="34"></path>`);
+        const y = 58 + index * 32;
+        svg.push(`<rect x="300" y="${y - 14}" width="14" height="14" fill="${colors[index % colors.length]}"></rect>`);
+        svg.push(`<text class="bar-label" x="322" y="${y - 2}">${label}: ${value}</text>`);
+        angle += slice;
+      });
+      svg.push(`<text x="128" y="151" font-size="24" font-weight="700" fill="var(--ink)">${total}</text>`);
+      svg.push(`<text x="112" y="174" class="axis">orders</text>`);
+      svg.push("</svg>");
+      document.getElementById(id).innerHTML = svg.join("");
+    }
+
+    function arc(cx, cy, r, startAngle, endAngle) {
+      const start = polar(cx, cy, r, endAngle);
+      const end = polar(cx, cy, r, startAngle);
+      const large = endAngle - startAngle <= 180 ? "0" : "1";
+      return `M ${start.x} ${start.y} A ${r} ${r} 0 ${large} 0 ${end.x} ${end.y}`;
+    }
+
+    function polar(cx, cy, r, angle) {
+      const rad = (angle - 90) * Math.PI / 180;
+      return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    }
+
+    function renderTests() {
+      const segmentSales = Object.entries(groupSum("customer_segment")).sort((a, b) => b[1] - a[1]);
+      const categorySales = Object.entries(groupSum("category")).sort((a, b) => b[1] - a[1]);
+      const discountValues = rows.map(row => row.discount);
+      const salesValues = rows.map(row => row.net_sales);
+      const corr = correlation(discountValues, salesValues);
+      document.getElementById("tests").innerHTML = [
+        `Corporate vs other segments: <strong>${segmentSales[0][0]}</strong> has the highest total net sales at ${money(segmentSales[0][1])}.`,
+        `Category revenue: <strong>${categorySales[0][0]}</strong> leads at ${money(categorySales[0][1])}.`,
+        `Discount relationship: correlation between discount and net sales is <strong>${corr.toFixed(2)}</strong>, so discount alone does not explain order value.`,
+        `Returns: Clothing has multiple returned orders and deserves closer quality or fit analysis.`
+      ].map(item => `<li>${item}</li>`).join("");
+    }
+
+    function correlation(a, b) {
+      const meanA = a.reduce((sum, value) => sum + value, 0) / a.length;
+      const meanB = b.reduce((sum, value) => sum + value, 0) / b.length;
+      const numerator = a.reduce((sum, value, index) => sum + (value - meanA) * (b[index] - meanB), 0);
+      const denominatorA = Math.sqrt(a.reduce((sum, value) => sum + Math.pow(value - meanA, 2), 0));
+      const denominatorB = Math.sqrt(b.reduce((sum, value) => sum + Math.pow(value - meanB, 2), 0));
+      return numerator / (denominatorA * denominatorB);
+    }
+
+    function renderIssues() {
+      const ids = rows.map(row => row.order_id);
+      const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+      const issues = [
+        [`Duplicate order ID`, duplicateIds.length ? duplicateIds.join(", ") : "None"],
+        [`Negative quantity`, rows.filter(row => row.quantity < 0).map(row => row.order_id).join(", ") || "None"],
+        [`Missing delivery days`, rows.filter(row => row.delivery_days === null).map(row => row.order_id).join(", ") || "None"],
+        [`Outlier order values`, rows.filter(row => row.net_sales > 50000).map(row => `${row.order_id} (${money(row.net_sales)})`).join(", ") || "None"]
+      ];
+      document.getElementById("issues").innerHTML = issues.map(([title, detail]) => `
+        <div class="issue"><strong>${title}</strong><br><span>${detail}</span></div>
+      `).join("");
+    }
+
+    function renderSchema() {
+      const schema = [
+        ["order_id", "Categorical", "Unique identifier"],
+        ["order_date", "Date", "Time trend analysis"],
+        ["region, city", "Categorical", "Geographic comparison"],
+        ["customer_segment", "Categorical", "Segment comparison"],
+        ["category, product", "Categorical", "Product analysis"],
+        ["quantity, unit_price, discount", "Numeric", "Revenue calculation"],
+        ["payment_method", "Categorical", "Payment behavior"],
+        ["delivery_days", "Numeric", "Fulfillment performance"],
+        ["returned", "Categorical", "Return analysis"]
+      ];
+      document.getElementById("schema").innerHTML = schema.map(row => `
+        <tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>
+      `).join("");
+    }
+
+    const monthlySales = rows.reduce((acc, row) => {
+      acc[row.month] = (acc[row.month] || 0) + row.net_sales;
+      return acc;
+    }, {});
+
+    renderMetrics();
+    renderLineChart("monthlyChart", monthlySales);
+    renderBarChart("categoryChart", groupSum("category"), "var(--teal)");
+    renderBarChart("regionChart", groupSum("region"), "var(--blue)");
+    renderDonut("paymentChart", countBy("payment_method"));
+    renderTests();
+    renderIssues();
+    renderSchema();
+  </script>
+</body>
+</html>

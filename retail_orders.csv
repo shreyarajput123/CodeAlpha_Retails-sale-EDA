@@ -1,0 +1,38 @@
+order_id,order_date,region,city,customer_segment,category,product,quantity,unit_price,discount,payment_method,delivery_days,returned
+R1001,2025-01-05,North,Delhi,Consumer,Electronics,Headphones,2,1200,0.05,UPI,3,No
+R1002,2025-01-09,South,Bengaluru,Corporate,Furniture,Office Chair,1,4800,0.10,Credit Card,5,No
+R1003,2025-01-17,West,Mumbai,Consumer,Home,Air Purifier,1,8500,0.00,Debit Card,4,No
+R1004,2025-01-28,East,Kolkata,Home Office,Clothing,Jacket,3,1800,0.15,UPI,6,Yes
+R1005,2025-02-03,North,Jaipur,Consumer,Groceries,Coffee Pack,5,450,0.00,Cash,2,No
+R1006,2025-02-11,South,Chennai,Corporate,Electronics,Monitor,2,9200,0.08,Credit Card,7,No
+R1007,2025-02-22,West,Pune,Consumer,Clothing,Sneakers,2,2600,0.12,UPI,4,No
+R1008,2025-02-26,East,Bhubaneswar,Home Office,Furniture,Desk Lamp,4,750,0.05,Debit Card,3,No
+R1009,2025-03-04,North,Delhi,Corporate,Electronics,Keyboard,6,1500,0.07,UPI,2,No
+R1010,2025-03-12,South,Hyderabad,Consumer,Home,Bedsheet Set,3,1300,0.10,Credit Card,5,No
+R1011,2025-03-19,West,Mumbai,Home Office,Groceries,Protein Bars,10,180,0.00,UPI,3,No
+R1012,2025-03-30,East,Kolkata,Consumer,Electronics,Smart Watch,1,14500,0.05,Debit Card,8,Yes
+R1013,2025-04-02,North,Lucknow,Consumer,Furniture,Bookshelf,1,6200,0.10,Cash,6,No
+R1014,2025-04-09,South,Bengaluru,Corporate,Home,Vacuum Cleaner,2,7200,0.00,Credit Card,4,No
+R1015,2025-04-15,West,Ahmedabad,Consumer,Clothing,Formal Shirt,4,1100,0.20,UPI,5,No
+R1016,2025-04-26,East,Patna,Home Office,Groceries,Organic Rice,8,320,0.00,Cash,3,No
+R1017,2025-05-03,North,Delhi,Corporate,Electronics,Laptop,1,68000,0.04,Credit Card,5,No
+R1018,2025-05-14,South,Chennai,Consumer,Clothing,Jeans,2,2400,0.18,UPI,4,Yes
+R1019,2025-05-21,West,Pune,Home Office,Home,Cookware Set,2,3600,0.05,Debit Card,6,No
+R1020,2025-05-29,East,Kolkata,Consumer,Groceries,Tea Pack,7,280,0.00,UPI,2,No
+R1021,2025-06-05,North,Jaipur,Home Office,Electronics,Bluetooth Speaker,3,3100,0.10,Credit Card,5,No
+R1022,2025-06-13,South,Hyderabad,Corporate,Furniture,Conference Table,1,24500,0.12,Bank Transfer,9,No
+R1023,2025-06-21,West,Mumbai,Consumer,Home,Water Filter,1,11500,0.07,Debit Card,4,No
+R1024,2025-06-27,East,Bhubaneswar,Consumer,Clothing,T-Shirt,5,650,0.15,UPI,3,No
+R1025,2025-07-04,North,Delhi,Consumer,Groceries,Olive Oil,4,900,0.00,Cash,2,No
+R1026,2025-07-10,South,Bengaluru,Corporate,Electronics,Tablet,2,28500,0.06,Credit Card,6,No
+R1027,2025-07-18,West,Ahmedabad,Home Office,Furniture,Ergonomic Chair,1,15800,0.10,Debit Card,7,No
+R1028,2025-07-24,East,Patna,Consumer,Home,Mixer Grinder,2,4300,0.05,UPI,5,No
+R1029,2025-08-01,North,Lucknow,Corporate,Electronics,Printer,2,12500,0.08,Bank Transfer,6,No
+R1030,2025-08-08,South,Chennai,Consumer,Groceries,Almonds,6,760,0.00,UPI,3,No
+R1031,2025-08-16,West,Pune,Consumer,Clothing,Dress,2,3200,0.22,Credit Card,5,Yes
+R1032,2025-08-25,East,Kolkata,Home Office,Furniture,Study Desk,1,9800,0.09,Debit Card,8,No
+R1033,2025-09-03,North,Delhi,Consumer,Electronics,Smartphone,1,52000,0.03,Credit Card,4,No
+R1034,2025-09-12,South,Hyderabad,Corporate,Home,Microwave,2,10500,0.04,Bank Transfer,6,No
+R1035,2025-09-18,West,Mumbai,Consumer,Groceries,Detergent,12,240,0.00,UPI,,No
+R1035,2025-09-28,East,Bhubaneswar,Home Office,Clothing,Kurta,-1,1500,0.10,Cash,4,No
+
